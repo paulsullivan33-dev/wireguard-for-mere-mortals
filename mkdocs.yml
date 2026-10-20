@@ -1,0 +1,27 @@
+site_name: WireGuard for Mere Mortals
+site_description: Plain-language WireGuard. Keys, configs, and cryptokey routing, hub and spoke topologies, full and split tunnels, DNS leaks, NAT and keepalive, MTU, and key hygiene, practised on a two-interface lab you build yourself.
+site_url: https://paulsullivan33-dev.github.io/wireguard-for-mere-mortals/
+
+# Guides live at the repo root (nice for GitHub browsing).
+# The deploy workflow copies them into docs/ before building.
+theme:
+  name: material
+
+nav:
+  - Home: index.md
+  - What WireGuard Is: what-wireguard-is.md
+  - Keys: keys.md
+  - Your First Tunnel: your-first-tunnel.md
+  - Reading the Config: reading-the-config.md
+  - wg-quick: wg-quick.md
+  - AllowedIPs and Routing: allowedips-and-routing.md
+  - "Reading wg show": reading-wg-show.md
+  - Topologies: topologies.md
+  - "Full Tunnel, Split Tunnel": full-tunnel-split-tunnel.md
+  - DNS Leaks and the Kill Switch: dns-leaks-and-kill-switch.md
+  - NAT and Endpoints: nat-and-endpoints.md
+  - MTU: mtu.md
+  - Key Hygiene: key-hygiene.md
+  - Troubleshooting: troubleshooting.md
+  - Glossary: glossary.md
+  - Writing Criteria: criteria.md

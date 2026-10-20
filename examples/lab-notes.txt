@@ -1,0 +1,44 @@
+The lab — notes
+====================================================================
+
+The guide's laboratory is two WireGuard interfaces on one
+Linux machine, built by lab.sh:
+
+    wg-hub    10.99.0.1   listens on UDP 51820, holds one peer
+    wg-spoke  10.99.0.2   listens on UDP 51821, peer endpoint
+                          127.0.0.1:51820, preshared key set
+
+Two interfaces on one box stand in for two machines because
+the part being taught — keys, configs, peer state — is
+identical; only the endpoint address would change on real
+hardware (the hub's reachable address instead of 127.0.0.1).
+Readers with two machines can type the same configs onto
+both and skip lab.sh entirely; hub.conf and spoke.conf in
+this directory are the wg-quick versions.
+
+Why not two network namespaces, the usual trick? The build
+machine's sandbox refuses namespace switches (setns:
+Operation not permitted) and has no WireGuard kernel module
+(modprobe: module not found), so the lab runs the userspace
+implementation, wireguard-go, which the sandbox permits.
+wg-quick falls back to the same implementation on its own —
+that fallback is captured in the guide too.
+
+The sandbox's other refusal shapes the whole guide: it
+forbids sending UDP datagrams (and ICMP) at the OS level,
+reproduced with a two-line Python probe. TCP connects work.
+Consequence: on the build machine the lab's interfaces come
+up, configs load, state reads perfectly — and no handshake
+can ever complete, because WireGuard's first packet is a
+UDP datagram. The guide teaches the handshake from the
+daemon's own debug log (handshake initiations attempted
+every five seconds, each refused by the OS) and describes
+the success state, labelled as described, wherever the
+distinction matters. Nothing about the failure is specific
+to WireGuard: it is what any UDP-blocking environment —
+a locked-down container, an overzealous egress firewall —
+does to a tunnel, and chapter 14 is built from it.
+
+Keys in this lab are generated fresh by lab.sh and are
+throwaways. The configs shipped in this directory carry
+<placeholders>, never keys.

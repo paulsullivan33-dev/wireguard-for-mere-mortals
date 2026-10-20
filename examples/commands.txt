@@ -1,0 +1,74 @@
+WireGuard commands — the everyday set from
+"WireGuard for Mere Mortals"
+====================================================================
+
+Every output quoted in the guide was captured
+from wireguard-tools v1.0.20210914 on the build
+machine, against the two-interface lab in this
+directory (see lab-notes.txt). The build
+machine's sandbox refuses all UDP sends, so
+handshakes there never complete — the guide
+shows that failure captured, and describes the
+success state, labelled as described.
+
+
+KEYS
+----
+    wg genkey                   a new private key
+    wg genkey | tee key | wg pubkey > key.pub
+                                the pair, in one breath
+    wg genpsk                   a preshared key
+                                (one per peer pair)
+
+
+THE LAB (chapter 3)
+-------------------
+    sudo examples/lab.sh up     both interfaces,
+                                configs loaded
+    wg show                     every interface:
+                                peers, handshakes,
+                                transfer counters
+    sudo examples/lab.sh down   interfaces deleted
+
+
+BY HAND (what wg-quick automates)
+---------------------------------
+    wg setconf wg0 wg0.setconf  load a config
+                                (replaces, never merges)
+    wg showconf wg0             the config the
+                                interface actually holds
+    ip address add 10.99.0.1/32 dev wg0
+    ip link set wg0 up
+    wg set wg0 peer <pubkey> allowed-ips 10.99.0.2/32
+                                change one peer, live
+    wg set wg0 peer <pubkey> remove
+    wg set wg0 peer <pubkey> persistent-keepalive 25
+
+
+WG-QUICK (chapter 5)
+--------------------
+    wg-quick up wg0             reads /etc/wireguard/wg0.conf
+    wg-quick down wg0
+    wg-quick strip wg0          the wg-only config
+                                wg-quick would hand over
+    systemctl enable wg-quick@wg0
+                                start at boot (documented
+                                in the guide, not run there)
+
+
+READING STATE (chapter 7)
+-------------------------
+    wg show wg0 latest-handshakes
+    wg show wg0 transfer        bytes, both directions
+    wg show wg0 endpoints
+    wg show all dump            machine-readable —
+                                WARNING: prints private
+                                keys in plaintext
+
+
+ROTATION (chapter 13)
+---------------------
+    wg genkey > new.key; wg pubkey < new.key > new.pub
+    wg set wg0 peer <old pubkey> remove
+                                on the peer, after it
+                                loads the new key
